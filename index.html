@@ -405,7 +405,7 @@
     <h2>Photo Gallery</h2>
     <div class="gallery-container">
       <div class="gallery-image-wrapper">
-        <img src="xxxxx.png" alt="Milestone Gallery Photo" id="gallery-photo-1" />
+        <img src="2.png" alt="Milestone Gallery Photo" id="gallery-photo-1" />
         <button class="embedded-next-btn" onclick="showChallengePopup()">Next</button>
       </div>
     </div>
@@ -416,12 +416,12 @@
     <h2 id="quiz-progress">Challenge Question 1/3</h2>
     <div class="quiz-card">
       <div id="quiz-question" class="quiz-question-text">Where was this photo taken?</div>
-      <img id="quiz-image" class="quiz-img" src="xxxxx.png" alt="Quiz Challenge Image" />
+      <img id="quiz-image" class="quiz-img" src="8.png" alt="Quiz Challenge Image" />
       <div id="quiz-options" class="quiz-options"></div>
       
       <!-- Dynamic Feedback Area: Loads separate correct and incorrect images -->
       <div id="quiz-feedback" class="feedback-container">
-        <img id="feedback-image" class="feedback-img" src="xxxxx.png" alt="Feedback Result Image" />
+        <img id="feedback-image" class="feedback-img" src="5.png" alt="Feedback Result Image" />
         <div id="feedback-text" class="feedback-text"></div>
         <button id="next-question-btn" class="btn" onclick="proceedToNextQuestion()">Next Question</button>
       </div>
@@ -433,7 +433,7 @@
     <h2>Final Memory Gallery</h2>
     <div class="gallery-container">
       <div class="gallery-image-wrapper">
-        <img src="xxxxx.png" alt="Final Gallery Photo" id="gallery-photo-2" />
+        <img src="3.png" alt="Gallery Photo Con't" id="gallery-photo-2" />
       </div>
     </div>
   </div>
@@ -659,30 +659,30 @@
     const quizData = [
       {
         question: "Where was this photo taken?",
-        image: "xxxxx.png",
-        options: ["Location A", "Location B", "Location C"],
+        image: "8.png",
+        options: ["at Taiwan", "at Macau", "at Cheung Chau"],
         correct: 0,
-        correctFeedbackImg: "xxxxx.png",
-        incorrectFeedbackImg: "xxxxx.png",
-        correctAnswerText: "at Location A"
-      },
-      {
-        question: "When was this photo taken?",
-        image: "xxxxx.png",
-        options: ["Summer 2023", "Autumn 2023", "Spring 2024"],
-        correct: 1,
-        correctFeedbackImg: "xxxxx.png",
-        incorrectFeedbackImg: "xxxxx.png",
-        correctAnswerText: "in Autumn 2023"
+        correctFeedbackImg: "5.png",
+        incorrectFeedbackImg: "4.png",
+        correctAnswerText: "at Taiwan"
       },
       {
         question: "Where was this photo taken?",
-        image: "xxxxx.png",
-        options: ["Location X", "Location Y", "Location Z"],
+        image: "7.png",
+        options: ["at Cheung Chau", "at Peng Chau", "at HKU"],
+        correct: 1,
+        correctFeedbackImg: "5.png",
+        incorrectFeedbackImg: "4.png",
+        correctAnswerText: "at Peng Chau"
+      },
+      {
+        question: "Where was this photo taken?",
+        image: "6.png",
+        options: ["at the lobby of Meng Wah", "at the lift of Grand Del Sol", "at the lift of Rosewood"],
         correct: 2,
-        correctFeedbackImg: "xxxxx.png",
-        incorrectFeedbackImg: "xxxxx.png",
-        correctAnswerText: "at Location Z"
+        correctFeedbackImg: "5.png",
+        incorrectFeedbackImg: "4.png",
+        correctAnswerText: "at the lift of Rosewood"
       }
     ];
 
