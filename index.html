@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Heart Nonogram & Milestone Gallery</title>
+  <!-- Canvas Confetti Library for Celebration Effect -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #e63946;
+      --accent-color: #f1faee;
+      --bg-color: #f7f9fb;
+      --dark-color: #1d3557;
+      --grid-border: #457b9d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--dark-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .section {
+      display: none;
+      width: 100%;
+      max-width: 650px;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- Nonogram Styling --- */
+    .nonogram-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      overflow-x: auto;
+    }
+
+    .nonogram-board {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-template-rows: auto auto;
+      gap: 0;
+    }
+
+    .top-clues {
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: repeat(15, 24px);
+    }
+
+    .col-clue {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 11px;
+      font-weight: bold;
+      padding-bottom: 4px;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .col-clue:nth-child(5n) {
+      border-right: 2px solid var(--grid-border);
+    }
+
+    .left-clues {
+      grid-column: 1;
+      grid-row: 2;
+      display: grid;
+      grid-template-rows: repeat(15, 24px);
+      padding-right: 6px;
+    }
+
+    .row-clue {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 11px;
+      font-weight: bold;
+      gap: 3px;
+      padding-right: 4px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .row-clue:nth-child(5n) {
+      border-bottom: 2px solid var(--grid-border);
+    }
+
+    .grid {
+      grid-column: 2;
+      grid-row: 2;
+      display: grid;
+      grid-template-columns: repeat(15, 24px);
+      grid-template-rows: repeat(15, 24px);
+      border: 2px solid var(--grid-border);
+    }
+
+    .cell {
+      width: 24px;
+      height: 24px;
+      border-right: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e0e0e0;
+      background-color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      font-size: 12px;
+    }
+
+    .cell:nth-child(5n) {
+      border-right: 2px solid var(--grid-border);
+    }
+
+    .cell-row-5 {
+      border-bottom: 2px solid var(--grid-border);
+    }
+
+    .cell.filled {
+      background-color: #111;
+    }
+
+    .cell.crossed::after {
+      content: '✕';
+      color: #888;
+      font-weight: bold;
+    }
+
+    /* Buttons */
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(230, 57, 70, 0.3);
+      transition: all 0.2s ease;
+      margin-top: 15px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(230, 57, 70, 0.4);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Photo Gallery */
+    .gallery-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .gallery-image-wrapper {
+      position: relative;
+      width: 100%;
+      height: 350px;
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: #eee;
+    }
+
+    .gallery-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .embedded-next-btn {
+      position: absolute;
+      bottom: 15px;
+      right: 15px;
+      background: rgba(230, 57, 70, 0.9);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+
+    /* Modals / Pop-ups */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    /* Quiz Challenge */
+    .quiz-card {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .quiz-img {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 15px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .option-btn {
+      background: #f8f9fa;
+      border: 1px solid #ced4da;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+
+    .option-btn:hover {
+      background: #e9ecef;
+    }
+
+    .celebration-banner {
+      background-color: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 15px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SECTION 1: NONOGRAM GAME -->
+  <div id="nonogram-section" class="section active">
+    <h1>Heart Nonogram Puzzle</h1>
+    <div class="nonogram-container">
+      <div class="nonogram-board">
+        <div class="top-clues" id="top-clues"></div>
+        <div class="left-clues" id="left-clues"></div>
+        <div class="grid" id="grid"></div>
+      </div>
+    </div>
+    <div id="celebration-banner" class="celebration-banner">
+      <h3>Congratulations! We have unlocked the 3-year milestone ^^.</h3>
+      <button class="btn" onclick="goToGalleryStage1()">Press the Continue button to unlock a photo gallery.</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2: PHOTO GALLERY 1 -->
+  <div id="gallery-section-1" class="section">
+    <h2>Photo Gallery</h2>
+    <div class="gallery-container">
+      <div class="gallery-image-wrapper">
+        <img src="xxx" alt="Milestone Gallery Photo" id="gallery-photo-1" />
+        <button class="embedded-next-btn" onclick="showChallengePopup()">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: QUIZ MINI-CHALLENGE -->
+  <div id="quiz-section" class="section">
+    <h2 id="quiz-progress">Challenge Question 1/3</h2>
+    <div class="quiz-card">
+      <img id="quiz-image" class="quiz-img" src="xxx" alt="Quiz Challenge Image" />
+      <div id="quiz-options" class="quiz-options"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: FINAL PHOTO GALLERY -->
+  <div id="gallery-section-2" class="section">
+    <h2>Final Memory Gallery</h2>
+    <div class="gallery-container">
+      <div class="gallery-image-wrapper">
+        <img src="xxx" alt="Final Gallery Photo" id="gallery-photo-2" />
+      </div>
+    </div>
+  </div>
+
+  <!-- POP-UP 1: PRE-CHALLENGE MODAL -->
+  <div id="challenge-modal" class="modal-overlay">
+    <div class="modal-content">
+      <p>unlock more upon completion of a mini challenge</p>
+      <div class="modal-buttons">
+        <button class="btn btn-secondary" onclick="closeChallengePopup()">return</button>
+        <button class="btn" onclick="startQuiz()">OK!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- POP-UP 2: POST-CHALLENGE MODAL -->
+  <div id="post-challenge-modal" class="modal-overlay">
+    <div class="modal-content">
+      <p>let's continue to unlock more challenges and leave more footprints on the earth before it vanishes :)</p>
+      <div class="modal-buttons">
+        <button class="btn" onclick="showFinalGallery()">View Final Gallery</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. NONOGRAM DATA & ENGINE ---
+    const rowCluesData = [
+      [4, 4], [6, 6], [15], [15], [15],
+      [5, 5], [9, 5], [5, 5], [9, 5], [3, 3],
+      [9], [7], [5], [3], [1]
+    ];
+
+    const colCluesData = [
+      [6], [8], [10], [11], [12],
+      [5, 3], [5, 1, 4], [5, 1, 1, 5], [5, 1, 1, 4], [5, 3],
+      [12], [11], [10], [8], [6]
+    ];
+
+    // Solution Matrix corresponding to the provided clues
+    const solution = [
+      [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+      [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
+      [0,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+      [0,0,1,1,1,0,0,0,0,0,1,1,1,0,0],
+      [0,0,0,1,1,1,1,1,1,1,1,1,0,0,0],
+      [0,0,0,0,1,1,1,1,1,1,1,0,0,0,0],
+      [0,0,0,0,0,1,1,1,1,1,0,0,0,0,0],
+      [0,0,0,0,0,0,1,1,1,0,0,0,0,0,0],
+      [0,0,0,0,0,0,0,1,0,0,0,0,0,0,0]
+    ];
+
+    let playerBoard = Array(15).fill(null).map(() => Array(15).fill(0)); // 0: empty, 1: filled, 2: crossed
+    let isSolved = false;
+
+    function initNonogram() {
+      const topCluesContainer = document.getElementById('top-clues');
+      const leftCluesContainer = document.getElementById('left-clues');
+      const gridContainer = document.getElementById('grid');
+
+      // Render Top Clues
+      colCluesData.forEach(clue => {
+        const div = document.createElement('div');
+        div.className = 'col-clue';
+        div.innerHTML = clue.join('<br>');
+        topCluesContainer.appendChild(div);
+      });
+
+      // Render Left Clues
+      rowCluesData.forEach(clue => {
+        const div = document.createElement('div');
+        div.className = 'row-clue';
+        div.innerText = clue.join(' ');
+        leftCluesContainer.appendChild(div);
+      });
+
+      // Render 15x15 Grid
+      for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          if (r % 5 === 4 && r !== 14) cell.classList.add('cell-row-5');
+          cell.dataset.row = r;
+          cell.dataset.col = c;
+
+          // Event Listeners for Clicking / Marking
+          cell.addEventListener('click', () => handleCellClick(r, c, cell));
+          cell.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            handleCellRightClick(r, c, cell);
+          });
+
+          gridContainer.appendChild(cell);
+        }
+      }
+    }
+
+    function handleCellClick(r, c, element) {
+      if (isSolved) return;
+      if (playerBoard[r][c] === 1) {
+        playerBoard[r][c] = 0;
+        element.classList.remove('filled');
+      } else {
+        playerBoard[r][c] = 1;
+        element.classList.remove('crossed');
+        element.classList.add('filled');
+      }
+      checkWinCondition();
+    }
+
+    function handleCellRightClick(r, c, element) {
+      if (isSolved) return;
+      if (playerBoard[r][c] === 2) {
+        playerBoard[r][c] = 0;
+        element.classList.remove('crossed');
+      } else {
+        playerBoard[r][c] = 2;
+        element.classList.remove('filled');
+        element.classList.add('crossed');
+      }
+      checkWinCondition();
+    }
+
+    function checkWinCondition() {
+      for (let r = 0; r < 15; r++) {
+        for (let c = 0; c < 15; c++) {
+          const isCellFilled = playerBoard[r][c] === 1 ? 1 : 0;
+          if (isCellFilled !== solution[r][c]) return;
+        }
+      }
+      triggerWin();
+    }
+
+    function triggerWin() {
+      isSolved = true;
+      // Confetti Effect
+      confetti({
+        particleCount: 120,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      document.getElementById('celebration-banner').style.display = 'block';
+    }
+
+    // --- 2. NAVIGATION & MODALS ---
+    function switchSection(sectionId) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function goToGalleryStage1() {
+      switchSection('gallery-section-1');
+    }
+
+    function showChallengePopup() {
+      document.getElementById('challenge-modal').style.display = 'flex';
+    }
+
+    function closeChallengePopup() {
+      document.getElementById('challenge-modal').style.display = 'none';
+    }
+
+    function startQuiz() {
+      closeChallengePopup();
+      switchSection('quiz-section');
+      loadQuizQuestion(0);
+    }
+
+    // --- 3. QUIZ MINI-CHALLENGE DATA & LOGIC (3 OPTIONS PER QUESTION) ---
+    const quizData = [
+      {
+        image: "xxx",
+        options: ["Option A (Place/Time)", "Option B (Place/Time)", "Option C (Place/Time)"],
+        correct: 0
+      },
+      {
+        image: "xxx",
+        options: ["Option A (Place/Time)", "Option B (Place/Time)", "Option C (Place/Time)"],
+        correct: 1
+      },
+      {
+        image: "xxx",
+        options: ["Option A (Place/Time)", "Option B (Place/Time)", "Option C (Place/Time)"],
+        correct: 2
+      }
+    ];
+
+    let currentQuestion = 0;
+
+    function loadQuizQuestion(index) {
+      currentQuestion = index;
+      document.getElementById('quiz-progress').innerText = `Challenge Question ${index + 1}/3`;
+      document.getElementById('quiz-image').src = quizData[index].image;
+      
+      const optionsContainer = document.getElementById('quiz-options');
+      optionsContainer.innerHTML = '';
+
+      quizData[index].options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = optText;
+        btn.onclick = () => handleAnswer(optIdx);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function handleAnswer(selectedIndex) {
+      if (currentQuestion < quizData.length - 1) {
+        loadQuizQuestion(currentQuestion + 1);
+      } else {
+        // Quiz completed
+        document.getElementById('post-challenge-modal').style.display = 'flex';
+      }
+    }
+
+    function showFinalGallery() {
+      document.getElementById('post-challenge-modal').style.display = 'none';
+      switchSection('gallery-section-2');
+    }
+
+    // Initialize the Nonogram grid on load
+    window.onload = initNonogram;
+  </script>
+</body>
+</html>
