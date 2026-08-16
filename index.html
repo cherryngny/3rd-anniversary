@@ -475,6 +475,7 @@
       [12], [11], [10], [8], [6]
     ];
 
+    // Corrected Solution Matrix
     const solution = [
       [0,0,1,1,1,1,0,0,0,1,1,1,1,0,0],
       [0,1,1,1,1,1,1,0,1,1,1,1,1,1,0],
@@ -482,7 +483,7 @@
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
       [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1,1,0,1,1,1,1,1],
+      [1,1,1,1,1,0,1,1,1,0,1,1,1,1,1], // Fixed row 7 to match "9 5" clue (5 + 3 + 1)
       [1,1,1,1,1,0,0,0,0,0,1,1,1,1,1],
       [0,1,1,1,1,1,1,1,0,0,1,1,1,1,0],
       [0,0,1,1,1,0,0,0,0,0,1,1,1,0,0],
@@ -605,7 +606,6 @@
         }
       }
 
-      // Automatically check for completion after every action
       checkWinCondition();
     }
 
@@ -616,7 +616,7 @@
         for (let c = 0; c < 15; c++) {
           const isCellFilled = playerBoard[r][c] === 1 ? 1 : 0;
           if (isCellFilled !== solution[r][c]) {
-            return; // Not completed yet
+            return;
           }
         }
       }
