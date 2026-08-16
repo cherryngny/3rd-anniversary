@@ -65,7 +65,7 @@
       flex-direction: column;
       align-items: center;
       background: #ffffff;
-      padding: 10px;
+      padding: 15px;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       margin-bottom: 15px;
@@ -204,9 +204,9 @@
       cursor: pointer;
       box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
       transition: all 0.2s ease;
-      margin-top: 15px;
       width: 100%;
       max-width: 300px;
+      text-align: center;
     }
 
     .btn:hover {
@@ -217,6 +217,13 @@
     .btn-secondary {
       background-color: #6c757d;
       box-shadow: 0 4px 10px rgba(108, 117, 125, 0.3);
+    }
+
+    /* Dedicated Complete Button Styling */
+    #complete-btn {
+      display: block;
+      margin: 20px auto 10px auto;
+      z-index: 10;
     }
 
     /* Photo Gallery */
@@ -395,7 +402,7 @@
       </div>
     </div>
     
-    <!-- Complete Button -->
+    <!-- Prominently Placed Complete Button -->
     <button id="complete-btn" class="btn" onclick="checkWinCondition(true)">Complete</button>
 
     <div id="celebration-banner" class="celebration-banner">
@@ -423,7 +430,7 @@
       <img id="quiz-image" class="quiz-img" src="8.png" alt="Quiz Challenge Image" />
       <div id="quiz-options" class="quiz-options"></div>
       
-      <!-- Dynamic Feedback Area: Loads separate correct and incorrect images -->
+      <!-- Dynamic Feedback Area -->
       <div id="quiz-feedback" class="feedback-container">
         <img id="feedback-image" class="feedback-img" src="5.png" alt="Feedback Result Image" />
         <div id="feedback-text" class="feedback-text"></div>
@@ -501,7 +508,7 @@
 
     // State for Continuous Dragging
     let isPointerDown = false;
-    let dragAction = null; // 'fill', 'unfill', 'cross', or 'uncross'
+    let dragAction = null;
 
     function setInteractionMode(mode) {
       interactionMode = mode;
@@ -536,7 +543,6 @@
           cell.dataset.row = r;
           cell.dataset.col = c;
 
-          // Start dragging gesture
           cell.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             if (isSolved) return;
@@ -546,7 +552,6 @@
             const isRightClick = e.pointerType === 'mouse' && e.button === 2;
             const activeType = isRightClick ? 'cross' : interactionMode;
 
-            // Determine drag action based on initial cell status
             if (activeType === 'fill') {
               dragAction = playerBoard[r][c] === 1 ? 'unfill' : 'fill';
             } else {
@@ -556,7 +561,6 @@
             applyDragAction(r, c, cell);
           });
 
-          // Continue drag over cells
           cell.addEventListener('pointerenter', (e) => {
             if (!isPointerDown || isSolved) return;
             applyDragAction(r, c, cell);
@@ -567,7 +571,6 @@
         }
       }
 
-      // Handle dragging across cell bounds on touch screens via elementFromPoint
       gridContainer.addEventListener('pointermove', (e) => {
         if (!isPointerDown || isSolved) return;
         const target = document.elementFromPoint(e.clientX, e.clientY);
@@ -580,7 +583,6 @@
         }
       });
 
-      // Reset pointer status when released anywhere on page
       window.addEventListener('pointerup', () => {
         isPointerDown = false;
         dragAction = null;
@@ -671,7 +673,6 @@
     }
 
     // --- 3. QUIZ MINI-CHALLENGE DATA & DYNAMIC FEEDBACK LOGIC ---
-    // Every question defines separate images for correct vs incorrect feedback!
     const quizData = [
       {
         question: "Where was this photo taken?",
@@ -710,7 +711,6 @@
       document.getElementById('quiz-question').innerText = quizData[index].question;
       document.getElementById('quiz-image').src = quizData[index].image;
       
-      // Hide feedback container when loading new question
       document.getElementById('quiz-feedback').style.display = 'none';
 
       const optionsContainer = document.getElementById('quiz-options');
@@ -731,11 +731,9 @@
       const feedbackImg = document.getElementById('feedback-image');
       const feedbackText = document.getElementById('feedback-text');
       
-      // Disable option buttons after picking an answer
       const optionBtns = document.querySelectorAll('.option-btn');
       optionBtns.forEach(btn => btn.disabled = true);
 
-      // Show specific feedback image & message depending on choice
       if (selectedIndex === q.correct) {
         feedbackImg.src = q.correctFeedbackImg;
         feedbackText.innerText = "bingo! leklek";
