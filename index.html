@@ -405,7 +405,7 @@
     <h2>Photo Gallery</h2>
     <div class="gallery-container">
       <div class="gallery-image-wrapper">
-        <img src="xxx" alt="Milestone Gallery Photo" id="gallery-photo-1" />
+        <img src="xxxxx.png" alt="Milestone Gallery Photo" id="gallery-photo-1" />
         <button class="embedded-next-btn" onclick="showChallengePopup()">Next</button>
       </div>
     </div>
@@ -416,12 +416,12 @@
     <h2 id="quiz-progress">Challenge Question 1/3</h2>
     <div class="quiz-card">
       <div id="quiz-question" class="quiz-question-text">Where was this photo taken?</div>
-      <img id="quiz-image" class="quiz-img" src="xxx_quiz_1" alt="Quiz Challenge Image 1" />
+      <img id="quiz-image" class="quiz-img" src="xxxxx.png" alt="Quiz Challenge Image 1" />
       <div id="quiz-options" class="quiz-options"></div>
       
       <!-- Feedback Area -->
       <div id="quiz-feedback" class="feedback-container">
-        <img id="feedback-image" class="feedback-img" src="" alt="Feedback Result" />
+        <img id="feedback-image" class="feedback-img" src="xxxxx.png" alt="Feedback Result" />
         <div id="feedback-text" class="feedback-text"></div>
         <button id="next-question-btn" class="btn" onclick="proceedToNextQuestion()">Next Question</button>
       </div>
@@ -433,7 +433,7 @@
     <h2>Final Memory Gallery</h2>
     <div class="gallery-container">
       <div class="gallery-image-wrapper">
-        <img src="xxx" alt="Final Gallery Photo" id="gallery-photo-2" />
+        <img src="xxxxx.png" alt="Final Gallery Photo" id="gallery-photo-2" />
       </div>
     </div>
   </div>
@@ -469,7 +469,7 @@
 
     const colCluesData = [
       [6], [8], [10], [11], [12],
-      [5, 3], [5, 1, 4], [5, 1, 1, 5], [5, 1, 1, 4], [5, 3],
+      [5, 1, 1, 3], [4, 1, 1, 4], [3, 1, 1, 5], [4, 1, 1, 4], [5, 3],
       [12], [11], [10], [8], [6]
     ];
 
@@ -494,6 +494,10 @@
     let playerBoard = Array(15).fill(null).map(() => Array(15).fill(0));
     let isSolved = false;
     let interactionMode = 'fill';
+
+    // State for Continuous Dragging
+    let isPointerDown = false;
+    let dragAction = null; // 'fill', 'unfill', 'cross', or 'uncross'
 
     function setInteractionMode(mode) {
       interactionMode = mode;
@@ -528,46 +532,80 @@
           cell.dataset.row = r;
           cell.dataset.col = c;
 
+          // Start dragging gesture
           cell.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             if (isSolved) return;
-            if (e.pointerType === 'mouse' && e.button === 2) {
-              toggleCross(r, c, cell);
+            isPointerDown = true;
+            cell.releasePointerCapture(e.pointerId);
+
+            const isRightClick = e.pointerType === 'mouse' && e.button === 2;
+            const activeType = isRightClick ? 'cross' : interactionMode;
+
+            // Determine drag action based on initial cell status
+            if (activeType === 'fill') {
+              dragAction = playerBoard[r][c] === 1 ? 'unfill' : 'fill';
             } else {
-              if (interactionMode === 'fill') {
-                toggleFill(r, c, cell);
-              } else {
-                toggleCross(r, c, cell);
-              }
+              dragAction = playerBoard[r][c] === 2 ? 'uncross' : 'cross';
             }
+
+            applyDragAction(r, c, cell);
+          });
+
+          // Continue drag over cells
+          cell.addEventListener('pointerenter', (e) => {
+            if (!isPointerDown || isSolved) return;
+            applyDragAction(r, c, cell);
           });
 
           cell.addEventListener('contextmenu', (e) => e.preventDefault());
           gridContainer.appendChild(cell);
         }
       }
+
+      // Handle dragging across cell bounds on touch screens via elementFromPoint
+      gridContainer.addEventListener('pointermove', (e) => {
+        if (!isPointerDown || isSolved) return;
+        const target = document.elementFromPoint(e.clientX, e.clientY);
+        if (target && target.classList.contains('cell')) {
+          const r = parseInt(target.dataset.row);
+          const c = parseInt(target.dataset.col);
+          if (!isNaN(r) && !isNaN(c)) {
+            applyDragAction(r, c, target);
+          }
+        }
+      });
+
+      // Reset pointer status when released anywhere on page
+      window.addEventListener('pointerup', () => {
+        isPointerDown = false;
+        dragAction = null;
+      });
+      window.addEventListener('pointercancel', () => {
+        isPointerDown = false;
+        dragAction = null;
+      });
     }
 
-    function toggleFill(r, c, element) {
-      if (playerBoard[r][c] === 1) {
-        playerBoard[r][c] = 0;
-        element.classList.remove('filled');
-      } else {
+    function applyDragAction(r, c, element) {
+      if (dragAction === 'fill') {
         playerBoard[r][c] = 1;
         element.classList.remove('crossed');
         element.classList.add('filled');
-      }
-      checkWinCondition();
-    }
-
-    function toggleCross(r, c, element) {
-      if (playerBoard[r][c] === 2) {
-        playerBoard[r][c] = 0;
-        element.classList.remove('crossed');
-      } else {
+      } else if (dragAction === 'unfill') {
+        if (playerBoard[r][c] === 1) {
+          playerBoard[r][c] = 0;
+          element.classList.remove('filled');
+        }
+      } else if (dragAction === 'cross') {
         playerBoard[r][c] = 2;
         element.classList.remove('filled');
         element.classList.add('crossed');
+      } else if (dragAction === 'uncross') {
+        if (playerBoard[r][c] === 2) {
+          playerBoard[r][c] = 0;
+          element.classList.remove('crossed');
+        }
       }
       checkWinCondition();
     }
@@ -620,29 +658,29 @@
     const quizData = [
       {
         question: "Where was this photo taken?",
-        image: "xxx_quiz_image_1",
+        image: "xxxxx.png",
         options: ["Location A", "Location B", "Location C"],
         correct: 0,
-        correctFeedbackImg: "xxx",
-        incorrectFeedbackImg: "xxx",
+        correctFeedbackImg: "xxxxx.png",
+        incorrectFeedbackImg: "xxxxx.png",
         correctAnswerText: "at Location A"
       },
       {
         question: "When was this photo taken?",
-        image: "xxx_quiz_image_2",
+        image: "xxxxx.png",
         options: ["Summer 2023", "Autumn 2023", "Spring 2024"],
         correct: 1,
-        correctFeedbackImg: "xxx",
-        incorrectFeedbackImg: "xxx",
+        correctFeedbackImg: "xxxxx.png",
+        incorrectFeedbackImg: "xxxxx.png",
         correctAnswerText: "in Autumn 2023"
       },
       {
         question: "Where was this photo taken?",
-        image: "xxx_quiz_image_3",
+        image: "xxxxx.png",
         options: ["Location X", "Location Y", "Location Z"],
         correct: 2,
-        correctFeedbackImg: "xxx",
-        incorrectFeedbackImg: "xxx",
+        correctFeedbackImg: "xxxxx.png",
+        incorrectFeedbackImg: "xxxxx.png",
         correctAnswerText: "at Location Z"
       }
     ];
