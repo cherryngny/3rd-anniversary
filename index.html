@@ -97,12 +97,6 @@
       color: white;
     }
 
-    .debug-btn {
-      border-color: #6c757d;
-      color: #6c757d;
-      background: #f8f9fa;
-    }
-
     .nonogram-board {
       display: grid;
       grid-template-columns: auto auto;
@@ -393,7 +387,6 @@
       <div class="mode-toggle-container">
         <button id="fill-mode-btn" class="mode-btn active-mode" onclick="setInteractionMode('fill')">🩷 Fill Pink</button>
         <button id="cross-mode-btn" class="mode-btn" onclick="setInteractionMode('cross')">✕ Mark Cross</button>
-        <button class="mode-btn debug-btn" onclick="autoSolveForTesting()">⚡ Auto-Solve Grid (Debug)</button>
       </div>
       <div class="nonogram-board">
         <div class="top-clues" id="top-clues"></div>
@@ -650,25 +643,6 @@
       }
 
       triggerWin();
-    }
-
-    function autoSolveForTesting() {
-      const cells = document.querySelectorAll('.cell');
-      for (let r = 0; r < 15; r++) {
-        for (let c = 0; c < 15; c++) {
-          const idx = r * 15 + c;
-          const cell = cells[idx];
-          if (solution[r][c] === 1) {
-            playerBoard[r][c] = 1;
-            cell.classList.remove('crossed');
-            cell.classList.add('filled');
-          } else {
-            playerBoard[r][c] = 0;
-            cell.classList.remove('filled', 'crossed');
-          }
-        }
-      }
-      checkWinCondition();
     }
 
     function triggerWin() {
