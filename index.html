@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Nonogram & Milestone Gallery</title>
+  <!-- Canvas Confetti Library for Celebration Effect -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     :root {
@@ -99,6 +100,7 @@
     .debug-btn {
       border-color: #6c757d;
       color: #6c757d;
+      background: #f8f9fa;
     }
 
     .nonogram-board {
@@ -386,7 +388,7 @@
       <div class="mode-toggle-container">
         <button id="fill-mode-btn" class="mode-btn active-mode" onclick="setInteractionMode('fill')">🩷 Fill Pink</button>
         <button id="cross-mode-btn" class="mode-btn" onclick="setInteractionMode('cross')">✕ Mark Cross</button>
-        <!-- Quick Debug Auto-Solve Button -->
+        <!-- Auto-Solve Button for Instant Testing -->
         <button class="mode-btn debug-btn" onclick="autoSolveForTesting()">⚡ Auto-Solve Grid (Debug)</button>
       </div>
       <div class="nonogram-board">
@@ -606,7 +608,7 @@
       checkWinCondition();
     }
 
-    // Improved Win Validation Condition
+    // Win check
     function checkWinCondition() {
       if (isSolved) return;
 
@@ -615,7 +617,6 @@
           const isFilled = (playerBoard[r][c] === 1);
           const shouldBeFilled = (solution[r][c] === 1);
           
-          // Require exact match for filled pink cells; do not penalize empty vs cross markings
           if (isFilled !== shouldBeFilled) {
             return;
           }
@@ -625,7 +626,7 @@
       triggerWin();
     }
 
-    // Debug helper to fill grid automatically
+    // Auto-fill helper function
     function autoSolveForTesting() {
       const cells = document.querySelectorAll('.cell');
       for (let r = 0; r < 15; r++) {
